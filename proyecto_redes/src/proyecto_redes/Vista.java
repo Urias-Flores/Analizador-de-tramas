@@ -601,7 +601,8 @@ public class Vista extends javax.swing.JFrame {
             txt_error_trama.setVisible(true);
             txt_error_trama.setText("*Ingrese o seleccione una trama");
             txt_error_trama.setForeground(Color.red);
-        }else if(txt_s_trama.getText().isEmpty() == true)
+        }
+        else if(txt_s_trama.getText().isEmpty() == true)
         {
             analizar_trama(txt_c_trama.getText());
         }else
@@ -754,7 +755,7 @@ public class Vista extends javax.swing.JFrame {
         map.put(121,"SMP");
         map.put(122,"SM");
         map.put(123,"PTP");
-
+        
         return map.get(bytes);
     }
     
@@ -851,7 +852,7 @@ public class Vista extends javax.swing.JFrame {
         {
             
             String trama2[] = trama.split(" ", trama.length());
-            for(int i = 0; i<trama2.length; i++)
+            for(int i = 0; i< trama2.length; i++)
             {
                 if(trama2[i].equals("") || trama2[i] == null)
                 {
@@ -874,7 +875,6 @@ public class Vista extends javax.swing.JFrame {
     
     private void procesar(String trama1)
     {
-        txt_trama_analizada.setText(trama1);
         String[] trama;
         trama = trama1.split(" ", trama1.length());
         
@@ -889,55 +889,62 @@ public class Vista extends javax.swing.JFrame {
                 lista_trama.add(trama[i]);
             }
         }
-           
-        String mac_origen = lista_trama.get(0);
-        String mac_destino = lista_trama.get(1);
-        for(int i = 1; i<6; i++)
-        {
-            mac_origen = mac_origen+" "+lista_trama.get(i);
-        }
-        for(int i = 7; i<12; i++)
-        {
-            mac_destino = mac_destino+" "+lista_trama.get(i);
-        }
-        String type = lista_trama.get(12);
-        for(int i = 13; i<14; i++)
-        {
-            type = type + lista_trama.get(i);
-        }
         
-        String ip_origen = "";
-        ip_origen = ip_origen + Integer.parseInt(lista_trama.get(26), 16);
-        for(int i = 27; i<30; i++)
-        {
-            ip_origen = ip_origen +"."+ Integer.parseInt(lista_trama.get(i), 16);
+        if(lista_trama.size() >= 37){
+            txt_trama_analizada.setText(trama1);
+            String mac_origen = lista_trama.get(0);
+            String mac_destino = lista_trama.get(1);
+            for(int i = 1; i<6; i++)
+            {
+                mac_origen = mac_origen+" "+lista_trama.get(i);
+            }
+            for(int i = 7; i<12; i++)
+            {
+                mac_destino = mac_destino+" "+lista_trama.get(i);
+            }
+            String type = lista_trama.get(12);
+            for(int i = 13; i<14; i++)
+            {
+                type = type + lista_trama.get(i);
+            }
+
+            String ip_origen = "";
+            ip_origen = ip_origen + Integer.parseInt(lista_trama.get(26), 16);
+            for(int i = 27; i<30; i++)
+            {
+                ip_origen = ip_origen +"."+ Integer.parseInt(lista_trama.get(i), 16);
+            }
+
+            String ip_destino = "";
+            ip_destino = ip_destino + Integer.parseInt(lista_trama.get(30), 16);
+            for(int i = 31; i<34; i++)
+            {
+                ip_destino = ip_destino +"."+ Integer.parseInt(lista_trama.get(i), 16);
+            }
+            String puerto_origen = ""+Integer.parseInt(lista_trama.get(34)+lista_trama.get(35), 16);
+            String puerto_destino = ""+Integer.parseInt(lista_trama.get(36)+lista_trama.get(37), 16);
+            String protocolo = protocolos(Integer.parseInt(lista_trama.get(23), 16));
+            String TTL = ""+Integer.parseInt(lista_trama.get(22), 16);
+
+
+            txt_mac_origen.setText(mac_destino.toUpperCase());
+            txt_mac_destino.setText(mac_origen.toUpperCase());
+            txt_ethertype.setText(type(type));
+            txt_ip_origen.setText(ip_origen);
+            txt_ip_destino.setText(ip_destino);
+            txt_puerto_origen.setText(puerto_origen);
+            txt_puerto_destino.setText(puerto_destino);
+            txt_protocolo.setText(protocolo);
+            txt_ttl.setText(TTL);
+            txt_id_origen.setVisible(true);
+            txt_id_origen.setText(identificador_puerto(Integer.parseInt(puerto_origen)));
+            txt_id_destino.setVisible(true);
+            txt_id_destino.setText(identificador_puerto(Integer.parseInt(puerto_destino)));
+        }else{
+            txt_error_trama.setVisible(true);
+            txt_error_trama.setForeground(Color.red);
+            txt_error_trama.setText("*Trama no valida para este tipo de analisis");
         }
-        
-        String ip_destino = "";
-        ip_destino = ip_destino + Integer.parseInt(lista_trama.get(30), 16);
-        for(int i = 31; i<34; i++)
-        {
-            ip_destino = ip_destino +"."+ Integer.parseInt(lista_trama.get(i), 16);
-        }
-        String puerto_origen = ""+Integer.parseInt(lista_trama.get(34)+lista_trama.get(35), 16);
-        String puerto_destino = ""+Integer.parseInt(lista_trama.get(36)+lista_trama.get(37), 16);
-        String protocolo = protocolos(Integer.parseInt(lista_trama.get(23), 16));
-        String TTL = ""+Integer.parseInt(lista_trama.get(22), 16);
-        
-        
-        txt_mac_origen.setText(mac_destino);
-        txt_mac_destino.setText(mac_origen);
-        txt_ethertype.setText(type(type));
-        txt_ip_origen.setText(ip_origen);
-        txt_ip_destino.setText(ip_destino);
-        txt_puerto_origen.setText(puerto_origen);
-        txt_puerto_destino.setText(puerto_destino);
-        txt_protocolo.setText(protocolo);
-        txt_ttl.setText(TTL);
-        txt_id_origen.setVisible(true);
-        txt_id_origen.setText(identificador_puerto(Integer.parseInt(puerto_origen)));
-        txt_id_destino.setVisible(true);
-        txt_id_destino.setText(identificador_puerto(Integer.parseInt(puerto_destino)));
     }
     
     private void leer_archivo()
@@ -996,6 +1003,7 @@ public class Vista extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
